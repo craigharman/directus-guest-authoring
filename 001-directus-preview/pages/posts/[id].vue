@@ -41,6 +41,9 @@ if ($isPreview) {
 }
 </script>
 <template>
-	<div v-if="post">{{ post }}</div>
+	<div v-if="post">
+		<h1>{{ post.title }}</h1>
+		<p>{{ post.content }}</p>
+	</div>
 	<div v-else>Loading...</div>
 </template>
