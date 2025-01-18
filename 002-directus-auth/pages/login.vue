@@ -7,7 +7,8 @@ const result = ref(false)
 
 const login = async () => {
 	const response = await $directus.login(email.value, password.value)
-	console.log(response)
+	localStorage.setItem('directus_auth', JSON.stringify(response))
+	result.value = true
 }
 </script>
 <template>
