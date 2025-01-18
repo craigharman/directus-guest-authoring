@@ -8,7 +8,7 @@ import {
 const directus = createDirectus<DirectusSchema>(
 	"http://localhost:3000/directus",
 )
-	.with(authentication("json"))
+	.with(authentication("session"))
 	.with(rest());
 
 export default defineNuxtPlugin(() => {
