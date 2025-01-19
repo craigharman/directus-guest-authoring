@@ -1,5 +1,6 @@
 <script setup lang="ts">
-const { $directus, $login } = useNuxtApp()
+const { $directus } = useNuxtApp()
+const router = useRouter()
 
 const email = ref('')
 const password = ref('')
@@ -7,8 +8,8 @@ const result = ref(false)
 
 const login = async () => {
 	const response = await $directus.login(email.value, password.value)
-	localStorage.setItem('directus_auth', JSON.stringify(response))
 	result.value = true
+	router.push('/posts') // Redirect to /posts
 }
 </script>
 <template>
