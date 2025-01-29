@@ -5,6 +5,7 @@ import {
 	registerUser,
 	authentication,
 	readMe,
+	refresh,
 	type AuthenticationStorage
 } from "@directus/sdk";
 
@@ -25,8 +26,8 @@ export default defineNuxtPlugin(() => {
 		"http://localhost:3000/directus",
 	)
 	.with(authentication("cookie", { credentials: "include", storage }))
-	.with(rest({ credentials: "include" }));
-
+		.with(rest({ credentials: "include" }));
+	
 	const isAuthenticated = async () => {
 		try {
 			const me = await directus.request(
@@ -34,12 +35,23 @@ export default defineNuxtPlugin(() => {
 			);
 			return me
 		} catch (error) {
-			console.error(error);
+			console.error(error)
 			return false;
 		}
 	};
 
+	const refreshToken = async () => {
+		return directus.request(
+			refresh('cookie')
+		);
+	};
+
+	const logout = async () => {
+		await directus.logout()
+		navigateTo('/login')
+	}
+
 	return {
-		provide: { directus, readItems, registerUser, isAuthenticated },
+		provide: { directus, readItems, registerUser, isAuthenticated, refreshToken, logout },
 	};
 });

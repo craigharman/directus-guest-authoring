@@ -4,14 +4,12 @@ const router = useRouter()
 
 const email = ref('')
 const password = ref('')
-const result = ref(false)
 const errorMsg = ref(null)
 
 const login = async () => {
 	try {
 		errorMsg.value = null
-		const response = await $directus.login(email.value, password.value)
-		result.value = true
+		await $directus.login(email.value, password.value)
 		router.push('/posts') // Redirect to /posts
 	} catch (error) {
 		errorMsg.value = error.message || 'An unexpected error occurred'
@@ -21,9 +19,6 @@ const login = async () => {
 <template>
 	<form @submit.prevent="login">
 		<h1>Login</h1>
-		<div v-if="result">
-			<p>Successfully logged in</p>
-		</div>
 		<div v-if="errorMsg">
 			<p>{{ errorMsg }}</p>
 		</div>

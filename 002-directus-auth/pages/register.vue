@@ -6,8 +6,15 @@ const password = ref('')
 const result = ref(false)
 
 const register = async () => {
-	const response = await $directus.request($registerUser(email.value, password.value))
-	result.value = response.ok
+	try {
+		await $directus.request($registerUser(email.value, password.value))
+		result.value = true
+		password.value = ''
+	} catch (error) {
+		console.error(error)
+		result.value = false
+		password.value = ''
+	}
 }
 </script>
 <template>
