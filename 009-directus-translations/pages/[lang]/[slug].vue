@@ -7,25 +7,26 @@ const { data, error } = await useAsyncData('post', async () => {
 	const slugParam = Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug
 	const languageCode = Array.isArray(route.params.lang) ? route.params.lang[0] : route.params.lang
 
-	const defaultData = await $directus.request($readItems('posts', {
+	return await $directus.request($readItems('posts', {
 		filter: {
 			slug: { _eq: slugParam },
 		},
 		fields: ['id', 'title', 'content'],
 		limit: 1
-	}))
-	if (languageCode === 'en-US') {
-		return defaultData
-	}
-	const translatedData = await $directus.request($readItems('posts_translations', {
-		filter: {
-			posts_id: { _eq: 1 },
-			languages_code: { _eq: languageCode }
-		},
-		fields: ['id', 'title', 'content'],
-		limit: 1
-	}))
-	return translatedData
+	})).then(data => {
+		if (languageCode === 'en-US') {
+			return data
+		}
+		return $directus.request($readItems('posts_translations', {
+			filter: {
+				posts_id: { _eq: 1 },
+				languages_code: { _eq: languageCode }
+			},
+			fields: ['id', 'title', 'content'],
+			limit: 1
+		}))
+	})
+
 })
 
 if (error.value || data.value === null || data.value.length === 0) {
