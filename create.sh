@@ -18,6 +18,8 @@ npm install @directus/sdk
 
 # Copy templates/docker-compose.yml file to the project directory
 cp ../templates/docker-compose.yml .
+# Make sure docker image is up to date
+docker compose pull
 
 # Append `uploads/*` to .gitignore
 echo "# Project files" >> .gitignore
@@ -31,6 +33,10 @@ cp ../templates/nuxt.config.ts nuxt.config.ts
 
 # Create directus.d.ts file
 cp ../templates/directus.d.ts directus.d.ts
+
+# Make the Directus plugin
+mkdir plugins
+cp ../templates/directus.plugin.ts plugins/directus.ts
 
 echo ""
 echo "YOU MAY NEED TO EDIT THE directus.d.ts FILE IN THE PROJECT AND ARTICLE TO GET STARTED!"
