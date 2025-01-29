@@ -11,29 +11,27 @@ import {
 
 export default defineNuxtPlugin(() => {
 	class NuxtCookieStorage {
-		cookie = useCookie('directus-data')
+		cookie = useCookie("directus-data");
 		get() {
-		return this.cookie.value
+			return this.cookie.value;
 		}
 		set(data: any) {
-		this.cookie.value = data
+			this.cookie.value = data;
 		}
 	}
 
-	const storage = new NuxtCookieStorage() as AuthenticationStorage
+	const storage = new NuxtCookieStorage() as AuthenticationStorage;
 
 	const directus = createDirectus<DirectusSchema>(
 		"http://localhost:3000/directus",
 	)
-	.with(authentication("cookie", { credentials: "include", storage }))
+		.with(authentication("cookie", { credentials: "include", storage }))
 		.with(rest({ credentials: "include" }));
-	
+
 	const isAuthenticated = async () => {
 		try {
-			const me = await directus.request(
-				readMe(),
-			);
-			return me
+			const me = await directus.request(readMe());
+			return me;
 		} catch (error) {
 			console.error(error)
 			return false;
