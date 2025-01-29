@@ -38,6 +38,9 @@ cp ../templates/directus.d.ts directus.d.ts
 mkdir plugins
 cp ../templates/directus.plugin.ts plugins/directus.ts
 
+# Change app.vue to use page routing
+cp ../templates/app.vue .
+
 echo ""
 echo "YOU MAY NEED TO EDIT THE directus.d.ts FILE IN THE PROJECT AND ARTICLE TO GET STARTED!"
 echo ""
