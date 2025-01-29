@@ -26,7 +26,7 @@ echo "# Project files" >> .gitignore
 echo "uploads/*" >> .gitignore
 
 # Create a .env file with the following contents:
-echo "DIRECTUS_URL=http://localhost:8055" > .env
+echo "API_URL=http://0.0.0.0:8055" > .env
 
 # Overwrite Nuxt config file with the following contents
 cp ../templates/nuxt.config.ts nuxt.config.ts
