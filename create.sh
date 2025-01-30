@@ -26,7 +26,7 @@ echo "# Project files" >> .gitignore
 echo "uploads/*" >> .gitignore
 
 # Create a .env file with the following contents:
-echo "DIRECTUS_URL=http://localhost:8055" > .env
+echo "API_URL=http://0.0.0.0:8055" > .env
 
 # Overwrite Nuxt config file with the following contents
 cp ../templates/nuxt.config.ts nuxt.config.ts
@@ -37,6 +37,9 @@ cp ../templates/directus.d.ts directus.d.ts
 # Make the Directus plugin
 mkdir plugins
 cp ../templates/directus.plugin.ts plugins/directus.ts
+
+# Change app.vue to use page routing
+cp ../templates/app.vue .
 
 echo ""
 echo "YOU MAY NEED TO EDIT THE directus.d.ts FILE IN THE PROJECT AND ARTICLE TO GET STARTED!"
