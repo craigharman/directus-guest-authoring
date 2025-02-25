@@ -29,5 +29,5 @@ const fieldLookup = computed(() => {
 <template>
 	<component v-if="!field.meta.hidden" :key="field.field" :is="fieldLookup" :field="field.field"
 		:width="field.meta.width" :defaultValue="field.schema.default_value" :label="field.meta.field"
-		:options="field.meta.options" />
+		:options="field.meta.options" :required="field.meta.required" />
 </template>

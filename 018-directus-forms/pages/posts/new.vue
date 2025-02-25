@@ -18,10 +18,29 @@ const postFields = data
 </script>
 
 <template>
+	<h1>New</h1>
 	{{ postFields }}
-	<div style="width: 400px;">
-		<form>
-			<DirectusFormElement v-for="field in postFields" :key="field.field" :field="field" />
-		</form>
-	</div>
+	<form>
+		<DirectusFormElement v-for="field in postFields" :key="field.field" :field="field" />
+	</form>
 </template>
+
+<style scoped>
+form {
+	display: flex;
+	flex-wrap: wrap;
+	width: 400px;
+}
+</style>
+
+<style>
+label {
+	display: block;
+	margin-top: 0.5em;
+	margin-bottom: 0.2em;
+}
+
+select {
+	width: 100%;
+}
+</style>
