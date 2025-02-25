@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 const { $directus, $readFieldsByCollection } = useNuxtApp()
 
 const { data, error } = await useAsyncData('posts', async () => {
@@ -17,7 +18,10 @@ const postFields = data
 </script>
 
 <template>
-	<div>
-		{{ postFields }}
+	{{ postFields }}
+	<div style="width: 400px;">
+		<form>
+			<DirectusFormElement v-for="field in postFields" :key="field.field" :field="field" />
+		</form>
 	</div>
 </template>
