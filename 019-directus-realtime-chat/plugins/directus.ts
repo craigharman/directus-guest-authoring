@@ -1,15 +1,9 @@
-import {
-	createDirectus,
-	rest,
-	readItem,
-	readItems,
-	withToken,
-} from "@directus/sdk";
+import { createDirectus, realtime } from "@directus/sdk";
 const directus = createDirectus<DirectusSchema>(
-	"http://your-website-url/directus",
-).with(rest());
+	"http://localhost:8055/directus",
+).with(realtime());
 export default defineNuxtPlugin(() => {
 	return {
-		provide: { directus, readItem, readItems, withToken },
+		provide: { directus },
 	};
 });

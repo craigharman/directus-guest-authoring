@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-const { $directus, $readFieldsByCollection } = useNuxtApp()
+const { $directus, $readFieldsByCollection, $createItem } = useNuxtApp()
 
 const { data, error } = await useAsyncData('posts', async () => {
 	return $directus.request($readFieldsByCollection('posts'))
@@ -18,9 +18,11 @@ const postFields = data
 
 const form = ref({})
 const formError: Ref<string | null> = ref(null)
+const formSuccess: Ref<string | null> = ref(null)
 
 const submitForm = async () => {
 	formError.value = null
+	formSuccess.value = null
 	// Validate form data against field validation rules
 	for (const field of postFields.value) {
 		if (field.meta?.validation) {
@@ -44,13 +46,21 @@ const submitForm = async () => {
 			}
 		}
 	}
-	return // Temporarily stop form submission
+
+	const result = await $directus.request($createItem('posts', form.value))
+	if (result.error) {
+		formError.value = result.error.message
+		console.error('Error creating post:', result.error)
+		return // Stop submission if error occurs
+	}
+	formSuccess.value = 'Post created successfully'
 }
 </script>
 
 <template>
 	<h1>New Post</h1>
 	<div v-if="formError" class="error">{{ formError }}</div>
+	<div v-else-if="formSuccess" class="success">{{ formSuccess }}</div>
 	<form @submit.prevent="submitForm">
 		<DirectusFormElement v-for="field in postFields" :key="field.field" :field="field"
 			v-model="form[field.field]" />
@@ -71,6 +81,10 @@ button {
 
 .error {
 	color: red;
+}
+
+.success {
+	color: green;
 }
 </style>
 

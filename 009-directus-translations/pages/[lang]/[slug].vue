@@ -19,7 +19,7 @@ const { data, error } = await useAsyncData('post', async () => {
 		}
 		return $directus.request($readItems('posts_translations', {
 			filter: {
-				posts_id: { _eq: 1 },
+				posts_id: { _eq: data[0].id },
 				languages_code: { _eq: languageCode }
 			},
 			fields: ['id', 'title', 'content'],

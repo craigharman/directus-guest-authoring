@@ -1,9 +1,16 @@
 /// <reference types="@directus/extensions/api.d.ts" />
 interface DirectusSchema {
-	posts: Post[];
+	messages: Message[];
 }
-interface Post {
+interface Message {
 	id: number;
-	title: string;
 	content: string;
+	user_created: {
+		id: number;
+		email: string;
+		first_name: string;
+		last_name: string;
+		avatar: string;
+	};
+	date_created: string;
 }
