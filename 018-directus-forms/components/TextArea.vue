@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 const props = defineProps<{
 	defaultValue?: string
 	label?: string
@@ -6,19 +8,33 @@ const props = defineProps<{
 	field: string
 	required: boolean
 	options: Record<string, any> | null
+	modelValue?: string
 }>()
+
+const emit = defineEmits(['update:modelValue'])
 
 const fieldWidth = props.width === 'full' ? '100%' : '50%'
 
+// Create a computed property for two-way binding
+const textAreaValue = computed({
+	get() {
+		return props.modelValue || props.defaultValue || ''
+	},
+	set(value) {
+		emit('update:modelValue', value)
+	}
+})
 </script>
+
 <template>
-	<label for="field">{{ label }}</label>
-	<textarea :name="field" :value="defaultValue" :style="'width: ' + fieldWidth + ';'" rows="12"
-		:required="required" />
+	<div :style="'width: ' + fieldWidth + ';'">
+		<label for="field">{{ label }}</label>
+		<textarea :name="field" v-model="textAreaValue" rows="12" :required="required" />
+	</div>
 </template>
 
 <style scoped>
 textarea {
-	width: 90%;
+	width: 100%;
 }
 </style>
