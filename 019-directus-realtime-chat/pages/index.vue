@@ -18,12 +18,21 @@ onMounted(() => {
 	})
 })
 
+const credentials = ref({
+	email: '',
+	password: ''
+})
+
 const login = async () => {
-	await $directus.connect()
+	try {
+		await $directus.connect()
+	} catch (error) {
+		console.error(error) // Continue if socket is already connected
+	}
 	const login = {
 		type: 'auth',
-		email: 'test@test.com',
-		password: 'password'
+		email: credentials.value.email,
+		password: credentials.value.password
 	}
 	$directus.sendMessage(JSON.stringify(login))
 }
@@ -44,6 +53,15 @@ async function subscribe() {
 <template>
 	<div>
 		<h1>Directus Realtime Chat</h1>
-		<button @click="login">Login</button>
+		<div v-if="authToken === undefined">
+			<h2>Login</h2>
+			<input v-model="credentials.email" type="text" placeholder="Email" /><br />
+			<input v-model="credentials.password" type="password" placeholder="Password" /><br />
+			<button @click="login" type="button">Login</button>
+		</div>
+		<div v-else>
+			<h2>Chat</h2>
+			<div>Logged in</div>
+		</div>
 	</div>
 </template>
