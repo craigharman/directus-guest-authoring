@@ -17,18 +17,40 @@ if (error.value || data.value === null || data.value.length === 0) {
 const postFields = data
 
 const form = ref({})
+const formError: Ref<string | null> = ref(null)
 
 const submitForm = async () => {
-	console.log(form.value)
-	// field.meta.validation
-	// "validation": { "_and": [ { "slug": { "_regex": "^[a-z0-9]+(?:-[a-z0-9]+)*$" } } ] }, "validation_message": "Slug must use URL valid characters" } }
-	// const response = await $directus.items('posts').create(form.value)
-	// console.log(response)
+	formError.value = null
+	// Validate form data against field validation rules
+	for (const field of postFields.value) {
+		if (field.meta?.validation) {
+			try {
+				const validation = field.meta.validation
+				if (validation._and) {
+					for (const rule of validation._and) {
+						const fieldName = Object.keys(rule)[0]
+						if (rule[fieldName]._regex) {
+							const regex = new RegExp(rule[fieldName]._regex)
+							if (!regex.test(form.value[field.field])) {
+								formError.value = field.meta.validation_message || field.meta.field + ' failed validation'
+								console.error(`Validation failed for ${field.field}: ${field.meta.validation_message || 'Invalid format'}`)
+								return // Stop submission if validation fails
+							}
+						}
+					}
+				}
+			} catch (err) {
+				console.error(`Error parsing validation for ${field.field}:`, err)
+			}
+		}
+	}
+	return // Temporarily stop form submission
 }
 </script>
 
 <template>
 	<h1>New Post</h1>
+	<div v-if="formError" class="error">{{ formError }}</div>
 	<form @submit.prevent="submitForm">
 		<DirectusFormElement v-for="field in postFields" :key="field.field" :field="field"
 			v-model="form[field.field]" />
@@ -45,6 +67,10 @@ form {
 
 button {
 	margin-top: 1em;
+}
+
+.error {
+	color: red;
 }
 </style>
 

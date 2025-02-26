@@ -15,7 +15,6 @@ const emit = defineEmits(['update:modelValue'])
 
 const fieldWidth = props.width === 'full' ? '100%' : '50%'
 
-// Create a computed property for two-way binding
 const dateTimeValue = computed({
 	get() {
 		return props.modelValue || props.defaultValue || ''
