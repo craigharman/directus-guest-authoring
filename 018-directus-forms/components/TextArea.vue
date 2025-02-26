@@ -5,6 +5,7 @@ const props = defineProps<{
 	width: string | null
 	field: string
 	required: boolean
+	options: Record<string, any> | null
 }>()
 
 const fieldWidth = props.width === 'full' ? '100%' : '50%'

@@ -10,6 +10,8 @@ const props = defineProps<{
 	field: DirectusField
 }>()
 
+const emit = defineEmits(['update:modelValue'])
+
 const fieldLookup = computed(() => {
 	switch (props.field.meta.interface) {
 		case 'input':
@@ -29,5 +31,6 @@ const fieldLookup = computed(() => {
 <template>
 	<component v-if="!field.meta.hidden" :key="field.field" :is="fieldLookup" :field="field.field"
 		:width="field.meta.width" :defaultValue="field.schema.default_value" :label="field.meta.field"
-		:options="field.meta.options" :required="field.meta.required" />
+		:options="field.meta.options" :required="field.meta.required" :modelValue="$attrs.modelValue"
+		@update:modelValue="value => emit('update:modelValue', value)" />
 </template>
