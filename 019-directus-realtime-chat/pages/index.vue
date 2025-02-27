@@ -80,6 +80,12 @@ const subscribe = async (event) => {
 }
 
 const receiveMessage = (data) => {
+	console.log('receiveMessage', data)
+	if (data.type === 'ping') {
+		$directus.sendMessage({
+			type: 'pong',
+		})
+	}
 	if (data.type === 'subscription' && data.event === 'init') {
 		console.log('subscription started')
 	}
