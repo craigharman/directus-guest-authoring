@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { SubscriptionOptionsEvents, WebSocketEvents } from '@directus/sdk'
-
 
 const { $directus } = useNuxtApp()
 
@@ -8,6 +6,10 @@ const authToken: Ref<string | undefined> = ref()
 const messageList: Ref<Message[]> = ref([])
 
 onMounted(() => {
+	$directus.onWebSocket('open', () => {
+		console.log('Connection is open')
+	})
+
 	const cleanup = $directus.onWebSocket('message', (data) => {
 		if (data.type === 'auth' && data.status === 'ok') {
 			authToken.value = data.refresh_token
@@ -17,7 +19,8 @@ onMounted(() => {
 
 		if (data.type === 'items') {
 			for (const item of data.data) {
-				addMessageToList(item)
+				// Add to the beginning of the list to get order correct
+				messageList.value.unshift(item)
 			}
 		}
 		console.log(data)
@@ -44,20 +47,6 @@ const readAllMessages = () => {
 	})
 }
 
-// onMounted(() => {
-// 	$directus.onWebSocket('open', () => {
-// 		console.log('Connection is open')
-// 	})
-
-// 	$directus.onWebSocket('message', (event) => {
-// 		if (event.type === 'auth' && event.status === 'ok') {
-// 			authToken.value = event.refresh_token
-// 			subscribe() // Subscribe to all events
-// 		}
-// 		console.log('Message received:', event)
-// 	})
-// })
-
 const credentials = ref({
 	email: '',
 	password: ''
@@ -83,6 +72,7 @@ const subscribe = async (event) => {
 		query: {
 			fields: ['*', 'user_created.first_name'],
 		},
+		uid: "messages-subscription"
 	})
 
 	for await (const message of subscription) {
