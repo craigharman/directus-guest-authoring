@@ -4,6 +4,7 @@ const { $directus } = useNuxtApp()
 
 const authToken: Ref<string | undefined> = ref()
 const messageList: Ref<Message[]> = ref([])
+const newMessage: Ref<string> = ref('')
 
 onMounted(() => {
 	$directus.onWebSocket('open', () => {
@@ -30,7 +31,7 @@ onMounted(() => {
 	onBeforeUnmount(cleanup)
 })
 
-const addMessageToList = (message) => {
+const addMessageToList = (message: Message) => {
 	messageList.value.push(message)
 }
 
@@ -85,6 +86,17 @@ const receiveMessage = (data) => {
 		addMessageToList(message)
 	}
 }
+
+const messageSubmit = () => {
+	$directus.sendMessage({
+		type: 'items',
+		collection: 'messages',
+		action: 'create',
+		data: { content: newMessage.value },
+	})
+
+	newMessage.value = ''
+}
 </script>
 
 <template>
@@ -102,6 +114,11 @@ const receiveMessage = (data) => {
 			<div v-for="message in messageList" :key="message.id">
 				{{ message.user_created.first_name }}: {{ message.content }}
 			</div>
+			<form @submit.prevent="messageSubmit">
+				<label for="message">Message</label>
+				<input v-model="newMessage" type="text" id="text" />
+				<input type="submit" />
+			</form>
 		</div>
 	</div>
 </template>
