@@ -53,11 +53,6 @@ const credentials = ref({
 })
 
 const login = async () => {
-	try {
-		await $directus.connect()
-	} catch (error) {
-		console.error(error) // Continue if socket is already connected
-	}
 	const login = {
 		type: 'auth',
 		email: credentials.value.email,
@@ -91,6 +86,7 @@ const receiveMessage = (data) => {
 	}
 }
 </script>
+
 <template>
 	<div>
 		<h1>Directus Realtime Chat</h1>
