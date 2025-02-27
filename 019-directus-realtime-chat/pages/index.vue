@@ -133,6 +133,15 @@ const messageSubmit = () => {
 
 	newMessage.value = ''
 }
+
+const logout = () => {
+	$directus.sendMessage({
+		type: 'auth',
+		action: 'logout',
+	})
+	refreshToken.value = undefined
+	localStorage.removeItem('directus_refresh_token')
+}
 </script>
 
 <template>
@@ -155,6 +164,7 @@ const messageSubmit = () => {
 				<input v-model="newMessage" type="text" id="text" />
 				<input type="submit" />
 			</form>
+			<button type="button" @click="logout">Logout</button>
 		</div>
 	</div>
 </template>
