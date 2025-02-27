@@ -14,4 +14,4 @@ services:
       DB_CLIENT: "sqlite3"
       DB_FILENAME: "/directus/database/data.db"
       WEBSOCKETS_ENABLED: "true"
-      CONTENT_SECURITY_POLICY_DIRECTIVES__FRAME_SRC: localhost:3000
+      WEBSOCKETS_HEARTBEAT_ENABLED: "true"

@@ -7,8 +7,6 @@ const credentials = ref({
 	email: '',
 	password: ''
 })
-const messageList: Ref<Message[]> = ref([])
-const newMessage: Ref<string> = ref('')
 
 const saveRefreshToken = (token: string) => {
 	refreshToken.value = token
@@ -30,54 +28,16 @@ onMounted(() => {
 		$directus.connect()
 	}
 
-	$directus.onWebSocket('close', () => {
-		if (refreshToken.value) {
-			$directus.connect()
-			$directus.sendMessage({
-				type: 'auth',
-				refresh_token: refreshToken.value
-			})
-		}
-	})
 
 	const cleanup = $directus.onWebSocket('message', (message) => {
 		if (message.type === 'auth' && message.status === 'ok') {
 			saveRefreshToken(message.refresh_token)
-			if (messageList.value.length === 0) {
-				readAllMessages()
-				subscribe('create')
-			}
-		}
-
-		// The only message of type items we want to process is the initial array of messages
-		// All other messages are handled by the subscription
-		if (message.uid === 'get-recent-messages' && message.type === 'items') {
-			for (const item of message.data) {
-				messageList.value.unshift(item)
-			}
+			subscribe('create')
 		}
 	})
 
 	onBeforeUnmount(cleanup)
 })
-
-const addMessageToList = (message: Message) => {
-	messageList.value.push(message)
-}
-
-const readAllMessages = () => {
-	$directus.sendMessage({
-		type: 'items',
-		collection: 'messages',
-		action: 'read',
-		query: {
-			limit: 10,
-			sort: '-date_created',
-			fields: ['*', 'user_created.first_name'],
-		},
-		uid: 'get-recent-messages'
-	})
-}
 
 const login = async () => {
 	const login = {
@@ -87,6 +47,8 @@ const login = async () => {
 	}
 	$directus.sendMessage(JSON.stringify(login))
 }
+
+const messageList: Ref<Message[]> = ref([])
 
 const subscribe = async (event) => {
 	const { subscription } = await $directus.subscribe('messages', {
@@ -98,7 +60,6 @@ const subscribe = async (event) => {
 	})
 
 	for await (const message of subscription) {
-		console.log('receiveMessage', message)
 		receiveMessage(message)
 	}
 }
@@ -115,24 +76,8 @@ const receiveMessage = (data) => {
 	}
 }
 
-const messageSubmit = () => {
-	$directus.sendMessage({
-		type: 'items',
-		collection: 'messages',
-		action: 'create',
-		data: { content: newMessage.value },
-	})
-
-	newMessage.value = ''
-}
-
-const logout = () => {
-	$directus.sendMessage({
-		type: 'auth',
-		action: 'logout',
-	})
-	refreshToken.value = undefined
-	localStorage.removeItem('directus_refresh_token')
+const addMessageToList = (message: Message) => {
+	messageList.value.push(message)
 }
 </script>
 
@@ -150,18 +95,6 @@ const logout = () => {
 			<div v-for="message in messageList" :key="message.id">
 				{{ message.user_created.first_name }}: {{ message.content }}
 			</div>
-			<form @submit.prevent="messageSubmit">
-				<label for="message">Message</label>
-				<input v-model="newMessage" type="text" id="text" />
-				<input type="submit" />
-			</form>
-			<button type="button" @click="logout">Logout</button>
 		</div>
 	</div>
 </template>
-
-<style>
-form {
-	margin-top: 2em;
-}
-</style>
