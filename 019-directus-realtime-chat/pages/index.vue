@@ -12,6 +12,7 @@ onMounted(() => {
 	})
 
 	const cleanup = $directus.onWebSocket('message', (data) => {
+		console.log("CLEANUP")
 		if (data.type === 'auth' && data.status === 'ok') {
 			authToken.value = data.refresh_token
 			readAllMessages()
@@ -19,6 +20,7 @@ onMounted(() => {
 		}
 
 		if (data.type === 'items') {
+			console.log("DATA from items", data)
 			for (const item of data.data) {
 				// Add to the beginning of the list to get order correct
 				messageList.value.unshift(item)
@@ -122,3 +124,9 @@ const messageSubmit = () => {
 		</div>
 	</div>
 </template>
+
+<style>
+form {
+	margin-top: 2em;
+}
+</style>
