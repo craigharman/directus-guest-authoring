@@ -2,34 +2,62 @@
 
 const { $directus } = useNuxtApp()
 
-const authToken: Ref<string | undefined> = ref()
+const refreshToken: Ref<string | undefined> = ref()
 const messageList: Ref<Message[]> = ref([])
 const newMessage: Ref<string> = ref('')
 
+const saveRefreshToken = (token: string) => {
+	refreshToken.value = token
+	localStorage.setItem('directus_refresh_token', token)
+}
+
 onMounted(() => {
-	$directus.onWebSocket('open', () => {
-		console.log('Connection is open')
+	const storedToken = localStorage.getItem('directus_refresh_token')
+	if (storedToken) {
+		refreshToken.value = storedToken
+		$directus.connect()
+		$directus.onWebSocket('open', () => {
+			$directus.sendMessage({
+				type: 'auth',
+				refresh_token: storedToken
+			})
+		})
+	} else {
+		$directus.connect()
+	}
+
+	$directus.onWebSocket('close', () => {
+		console.log('Connection closed, attempting to reconnect...')
+		if (refreshToken.value) {
+			setTimeout(() => {
+				$directus.connect()
+				$directus.sendMessage({
+					type: 'auth',
+					refresh_token: refreshToken.value
+				})
+			}, 2000)
+		}
 	})
 
-	const cleanup = $directus.onWebSocket('message', (data) => {
+	const cleanup = $directus.onWebSocket('message', (message) => {
 		console.log("CLEANUP")
-		if (data.type === 'auth' && data.status === 'ok') {
-			authToken.value = data.refresh_token
+		if (message.type === 'auth' && message.status === 'ok') {
+			saveRefreshToken(message.refresh_token)
 			readAllMessages()
 			subscribe('create')
 		}
 
-		if (data.type === 'items') {
-			console.log("DATA from items", data)
-			for (const item of data.data) {
-				// Add to the beginning of the list to get order correct
+		// The only message of type items we want to process is the initial array of messages
+		// All other messages are handled by the subscription
+		if (message.type === 'items' && Array.isArray(message.data)) {
+			console.log("DATA from items", message)
+			for (const item of message.data) {
 				messageList.value.unshift(item)
 			}
 		}
-		console.log(data)
+		console.log(message)
 	})
 
-	$directus.connect()
 	onBeforeUnmount(cleanup)
 })
 
@@ -110,7 +138,7 @@ const messageSubmit = () => {
 <template>
 	<div>
 		<h1>Directus Realtime Chat</h1>
-		<div v-if="authToken === undefined">
+		<div v-if="refreshToken === undefined">
 			<h2>Login</h2>
 			<input v-model="credentials.email" type="text" placeholder="Email" /><br />
 			<input v-model="credentials.password" type="password" placeholder="Password" /><br />
