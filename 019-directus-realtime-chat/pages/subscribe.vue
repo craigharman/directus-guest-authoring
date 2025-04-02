@@ -70,7 +70,7 @@ const receiveMessage = (data) => {
 			type: 'pong',
 		})
 	}
-	if (data.uid === 'new-message-created' && data.type === 'subscription' && data.event === 'create') {
+	if (data.type === 'subscription' && data.event === 'create') {
 		const message = data.data[0]
 		addMessageToList(message)
 	}
