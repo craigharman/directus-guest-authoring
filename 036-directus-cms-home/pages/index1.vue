@@ -5,7 +5,7 @@ const page: Ref<Page | undefined> = ref()
 
 const { data, error } = await useAsyncData('page', async () => {
 	return $directus.request($readItems('pages', {
-		fields: ['id', 'title', 'permalink', 'published_at', 'blocks.*', 'blocks.item.*', 'blocks.item.image.*', 'blocks.item.button_group.buttons.*'],
+		fields: ['id', 'title', 'permalink', 'published_at', 'seo', 'blocks.collection', 'blocks.item.*', 'blocks.item.image.*', 'blocks.item.button_group.buttons.*', 'blocks.item.items.*', 'blocks.item.pricing_cards.*', 'blocks.item.pricing_cards.button.*', 'blocks.item.form.*', 'blocks.item.form.fields.*'],
 		filter: { title: { _eq: 'Home' } },
 	}))
 })

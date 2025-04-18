@@ -30,7 +30,7 @@ type GalleryItem = {
     :autoplay="{ delay: 3000 }"
     :items="items"
     :ui="{ item: 'basis-1/4' }"
-	class="w-full mx-auto -mt-36"
+	  class="w-full mx-auto -mt-36"
   >
     <img :src="'/directus/assets/' + item.directus_file" width="234" height="234" class="rounded-lg">
   </UCarousel>
