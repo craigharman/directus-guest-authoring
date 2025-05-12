@@ -42,6 +42,4 @@ cp ../templates/directus.plugin.ts plugins/directus.ts
 cp ../templates/app.vue .
 
 echo ""
-echo "YOU MAY NEED TO EDIT THE directus.d.ts FILE IN THE PROJECT AND ARTICLE TO GET STARTED!"
-echo ""
 echo "Project '$PROJECT_NAME' has been created and is ready for article writing!"

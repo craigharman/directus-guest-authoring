@@ -20,7 +20,7 @@ interface FormField {
 	name: string;
 	type: string;
 	label: string;
-	placeholder: string | null;
+	placeholder: string | undefined;
 	help: string | null;
 	validation: string | null;
 	width: string;
